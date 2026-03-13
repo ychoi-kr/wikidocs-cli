@@ -1,6 +1,7 @@
 import click
 
 from wikidocs_cli.client import WikiDocsClient
+from wikidocs_cli.config import load_token, save_token, remove_token, CREDENTIALS_FILE
 from wikidocs_cli.commands.book import book
 from wikidocs_cli.commands.page import page
 from wikidocs_cli.commands.image import image
@@ -12,13 +13,18 @@ from wikidocs_cli.commands.blog import blog
     "--token",
     envvar="WIKIDOCS_TOKEN",
     default=None,
-    help="WikiDocs API token (or set WIKIDOCS_TOKEN env var).",
+    help="WikiDocs API token (overrides stored credentials).",
+)
+@click.option(
+    "--profile",
+    default="default",
+    help="Named profile in ~/.wikidocs/credentials.",
 )
 @click.pass_context
-def cli(ctx, token):
+def cli(ctx, token, profile):
     """WikiDocs CLI — manage books, pages, images, and blog posts."""
     ctx.ensure_object(dict)
-    ctx.obj = {"token": token}
+    ctx.obj = {"token": token, "profile": profile}
 
 
 def get_client(ctx):
@@ -26,9 +32,12 @@ def get_client(ctx):
     obj = ctx.find_root().obj
     if isinstance(obj, dict):
         token = obj.get("token")
+        profile = obj.get("profile", "default")
+        if not token:
+            token = load_token(profile)
         if not token:
             raise click.ClickException(
-                "No API token provided. Set WIKIDOCS_TOKEN or use --token."
+                "No API token found. Run 'wikidocs configure' to set up credentials."
             )
         client = WikiDocsClient(token)
         ctx.find_root().obj = client
@@ -40,6 +49,29 @@ cli.add_command(book)
 cli.add_command(page)
 cli.add_command(image)
 cli.add_command(blog)
+
+
+# --- configure command ---
+
+@cli.command()
+@click.option("--token", "input_token", default=None, help="API token (non-interactive).")
+@click.pass_context
+def configure(ctx, input_token):
+    """Set up WikiDocs API credentials."""
+    profile = ctx.find_root().obj.get("profile", "default")
+    if input_token is None:
+        input_token = click.prompt("WikiDocs API token", hide_input=True)
+    save_token(input_token, profile)
+    click.echo(f"Credentials saved to {CREDENTIALS_FILE} [profile: {profile}]")
+
+
+@cli.command()
+@click.pass_context
+def logout(ctx):
+    """Remove stored WikiDocs credentials."""
+    profile = ctx.find_root().obj.get("profile", "default")
+    remove_token(profile)
+    click.echo(f"Credentials removed for profile: {profile}")
 
 
 # --- help-all command ---

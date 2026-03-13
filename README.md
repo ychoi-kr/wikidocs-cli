@@ -18,17 +18,35 @@ pip install -e .
 
 ## Authentication
 
-Get your API token from [WikiDocs](https://wikidocs.net) and set it as an environment variable:
+Get your API token from [WikiDocs](https://wikidocs.net), then run:
 
 ```bash
-export WIKIDOCS_TOKEN="your-token-here"
+wikidocs configure
 ```
 
-Or pass it directly with `--token`:
+This saves your token to `~/.wikidocs/credentials` (file permission `600`). After this, all commands work without any token flags or environment variables — credentials are loaded automatically.
+
+To remove stored credentials:
 
 ```bash
-wikidocs --token YOUR_TOKEN book list
+wikidocs logout
 ```
+
+**Named profiles** for multiple accounts:
+
+```bash
+wikidocs --profile work configure
+wikidocs --profile work book list
+```
+
+**Alternative methods** (e.g., for CI/automation):
+
+```bash
+export WIKIDOCS_TOKEN="your-token-here"     # environment variable
+wikidocs --token YOUR_TOKEN book list        # inline flag
+```
+
+Credential lookup order: `--token` flag > `WIKIDOCS_TOKEN` env > `~/.wikidocs/credentials`
 
 ## Commands
 
@@ -181,6 +199,7 @@ wikidocs blog update BLOG_ID --title "Today's Report" --content "![Chart](IMAGE_
 
 ### Tips for AI Agents
 
+- **No token handling needed.** Once a human runs `wikidocs configure`, credentials are stored locally. AI agents just call commands directly — no `--token`, no env vars, no secrets in prompts.
 - Run `wikidocs help-all` once to discover the full CLI surface in a single call.
 - `--help` works without a token — safe to call for exploration.
 - All `get`, `create`, and `update` commands output JSON to stdout. Parse with `jq` or directly.
