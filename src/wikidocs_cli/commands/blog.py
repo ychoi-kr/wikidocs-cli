@@ -12,7 +12,8 @@ def blog():
 @click.pass_context
 def blog_profile(ctx):
     """Get your blog profile."""
-    data = ctx.obj.blog_profile()
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).blog_profile()
     print_json(data)
 
 
@@ -22,7 +23,8 @@ def blog_profile(ctx):
 @click.pass_context
 def blog_list(ctx, page_num, as_json):
     """List blog posts."""
-    data = ctx.obj.blog_list(page_num)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).blog_list(page_num)
     if as_json:
         print_json(data)
     else:
@@ -35,7 +37,8 @@ def blog_list(ctx, page_num, as_json):
 @click.pass_context
 def blog_get(ctx, blog_id):
     """Get a blog post by ID."""
-    data = ctx.obj.blog_get(blog_id)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).blog_get(blog_id)
     print_json(data)
 
 
@@ -47,7 +50,8 @@ def blog_get(ctx, blog_id):
 @click.pass_context
 def blog_create(ctx, title, content, is_public, tags):
     """Create a new blog post."""
-    data = ctx.obj.blog_create(title, content, is_public=is_public, tags=tags)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).blog_create(title, content, is_public=is_public, tags=tags)
     print_json(data)
 
 
@@ -60,7 +64,8 @@ def blog_create(ctx, title, content, is_public, tags):
 @click.pass_context
 def blog_update(ctx, blog_id, title, content, is_public, tags):
     """Update a blog post."""
-    data = ctx.obj.blog_update(blog_id, title, content, is_public=is_public, tags=tags)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).blog_update(blog_id, title, content, is_public=is_public, tags=tags)
     print_json(data)
 
 
@@ -70,5 +75,6 @@ def blog_update(ctx, blog_id, title, content, is_public, tags):
 @click.pass_context
 def blog_image_upload(ctx, blog_id, file_path):
     """Upload an image to a blog post."""
-    data = ctx.obj.blog_upload_image(blog_id, file_path)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).blog_upload_image(blog_id, file_path)
     print_json(data)

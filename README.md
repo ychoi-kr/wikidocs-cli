@@ -123,9 +123,27 @@ wikidocs book list --json | jq '.[].id'
 wikidocs page get 12345 | jq -r '.content'
 ```
 
+## Discovering Commands
+
+All `--help` flags work without authentication, so you can explore the CLI freely:
+
+```bash
+wikidocs --help              # Top-level commands
+wikidocs book --help         # Book subcommands
+wikidocs page create --help  # Specific command options
+```
+
+To see every command and option in a single call:
+
+```bash
+wikidocs help-all
+```
+
 ## Usage with AI Agents
 
 This CLI is designed to be used by AI agents (Claude, GPT, etc.) via shell tool calls.
+
+**First call should be `wikidocs help-all`** — it dumps the full command tree (all groups, subcommands, options, and arguments) in one shot, so the agent can plan its calls without trial and error.
 
 ### Common Patterns
 
@@ -163,6 +181,8 @@ wikidocs blog update BLOG_ID --title "Today's Report" --content "![Chart](IMAGE_
 
 ### Tips for AI Agents
 
+- Run `wikidocs help-all` once to discover the full CLI surface in a single call.
+- `--help` works without a token — safe to call for exploration.
 - All `get`, `create`, and `update` commands output JSON to stdout. Parse with `jq` or directly.
 - `--content` accepts Markdown. WikiDocs renders it on the site.
 - Use `--json` flag on `list` commands to get structured data instead of a table.

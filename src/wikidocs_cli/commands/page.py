@@ -13,7 +13,8 @@ def page():
 @click.pass_context
 def page_get(ctx, page_id):
     """Get a page by ID."""
-    data = ctx.obj.get_page(page_id)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).get_page(page_id)
     print_json(data)
 
 
@@ -26,7 +27,8 @@ def page_get(ctx, page_id):
 @click.pass_context
 def page_create(ctx, subject, content, book_id, parent_id, is_open):
     """Create a new page."""
-    data = ctx.obj.create_page(subject, content, book_id=book_id, parent_id=parent_id, is_open=is_open)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).create_page(subject, content, book_id=book_id, parent_id=parent_id, is_open=is_open)
     print_json(data)
 
 
@@ -40,5 +42,6 @@ def page_create(ctx, subject, content, book_id, parent_id, is_open):
 @click.pass_context
 def page_update(ctx, page_id, subject, content, book_id, parent_id, is_open):
     """Update an existing page."""
-    data = ctx.obj.update_page(page_id, subject, content, book_id=book_id, parent_id=parent_id, is_open=is_open)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).update_page(page_id, subject, content, book_id=book_id, parent_id=parent_id, is_open=is_open)
     print_json(data)

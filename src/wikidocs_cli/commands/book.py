@@ -13,7 +13,8 @@ def book():
 @click.pass_context
 def book_list(ctx, as_json):
     """List your books."""
-    data = ctx.obj.list_books()
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).list_books()
     if as_json:
         print_json(data)
     else:
@@ -26,7 +27,8 @@ def book_list(ctx, as_json):
 @click.pass_context
 def book_get(ctx, book_id):
     """Get details of a book."""
-    data = ctx.obj.get_book(book_id)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).get_book(book_id)
     print_json(data)
 
 
@@ -38,5 +40,6 @@ def book_get(ctx, book_id):
 @click.pass_context
 def book_create(ctx, subject, summary, is_open, image_path):
     """Create a new book."""
-    data = ctx.obj.create_book(subject, summary=summary, is_open=is_open, image_path=image_path)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).create_book(subject, summary=summary, is_open=is_open, image_path=image_path)
     print_json(data)

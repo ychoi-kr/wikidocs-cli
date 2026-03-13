@@ -14,5 +14,6 @@ def image():
 @click.pass_context
 def image_upload(ctx, page_id, file_path):
     """Upload an image to a page."""
-    data = ctx.obj.upload_image(page_id, file_path)
+    from wikidocs_cli.main import get_client
+    data = get_client(ctx).upload_image(page_id, file_path)
     print_json(data)
