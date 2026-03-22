@@ -26,7 +26,7 @@ def page_get(ctx, page_id):
 @click.option("--open", "is_open", is_flag=True, help="Make the page public.")
 @click.pass_context
 def page_create(ctx, subject, content, book_id, parent_id, is_open):
-    """Create a new page."""
+    """Create a new page. Returns JSON including the created page's id."""
     from wikidocs_cli.main import get_client
     data = get_client(ctx).create_page(subject, content, book_id=book_id, parent_id=parent_id, is_open=is_open)
     print_json(data)

@@ -39,7 +39,7 @@ def book_get(ctx, book_id):
 @click.option("--image", "image_path", type=click.Path(exists=True), default=None, help="Cover image file.")
 @click.pass_context
 def book_create(ctx, subject, summary, is_open, image_path):
-    """Create a new book."""
+    """Create a new book. Returns JSON including the created book's id."""
     from wikidocs_cli.main import get_client
     data = get_client(ctx).create_book(subject, summary=summary, is_open=is_open, image_path=image_path)
     print_json(data)

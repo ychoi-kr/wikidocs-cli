@@ -49,7 +49,7 @@ def blog_get(ctx, blog_id):
 @click.option("--tags", default=None, help="Comma-separated tags.")
 @click.pass_context
 def blog_create(ctx, title, content, is_public, tags):
-    """Create a new blog post."""
+    """Create a new blog post. Returns JSON including the created post's id."""
     from wikidocs_cli.main import get_client
     data = get_client(ctx).blog_create(title, content, is_public=is_public, tags=tags)
     print_json(data)
