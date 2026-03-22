@@ -25,6 +25,18 @@ def print_table(rows: list[dict], headers: list[str]):
         click_echo("  ".join(str_row[h].ljust(col_widths[h]) for h in headers))
 
 
+def resolve_content(content, file_path):
+    import click
+    if content and file_path:
+        raise click.UsageError("--content and --file are mutually exclusive.")
+    if file_path:
+        with open(file_path) as f:
+            return f.read()
+    if not content:
+        raise click.UsageError("Either --content or --file is required.")
+    return content
+
+
 def click_echo(msg: str):
     import click
     click.echo(msg)

@@ -78,13 +78,10 @@ class WikiDocsClient:
         page_id: int,
         subject: str,
         content: str,
-        book_id: int | None = None,
         parent_id: int | None = None,
         is_open: bool = False,
     ) -> dict:
         payload: dict = {"id": page_id, "subject": subject, "content": content}
-        if book_id is not None:
-            payload["book_id"] = book_id
         if parent_id is not None:
             payload["parent_id"] = parent_id
         if is_open:

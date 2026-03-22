@@ -1,6 +1,6 @@
 import click
 
-from wikidocs_cli.utils import print_json, print_table
+from wikidocs_cli.utils import print_json, print_table, resolve_content
 
 
 @click.group()
@@ -44,13 +44,15 @@ def blog_get(ctx, blog_id):
 
 @blog.command("create")
 @click.option("--title", required=True, help="Blog post title.")
-@click.option("--content", required=True, help="Blog post content.")
+@click.option("--content", default=None, help="Blog post content.")
+@click.option("--file", "file_path", type=click.Path(exists=True), default=None, help="Read content from file.")
 @click.option("--public", "is_public", is_flag=True, help="Make the post public.")
 @click.option("--tags", default=None, help="Comma-separated tags.")
 @click.pass_context
-def blog_create(ctx, title, content, is_public, tags):
+def blog_create(ctx, title, content, file_path, is_public, tags):
     """Create a new blog post. Returns JSON including the created post's id."""
     from wikidocs_cli.main import get_client
+    content = resolve_content(content, file_path)
     data = get_client(ctx).blog_create(title, content, is_public=is_public, tags=tags)
     print_json(data)
 
@@ -58,13 +60,15 @@ def blog_create(ctx, title, content, is_public, tags):
 @blog.command("update")
 @click.argument("blog_id", type=int)
 @click.option("--title", required=True, help="Blog post title.")
-@click.option("--content", required=True, help="Blog post content.")
+@click.option("--content", default=None, help="Blog post content.")
+@click.option("--file", "file_path", type=click.Path(exists=True), default=None, help="Read content from file.")
 @click.option("--public", "is_public", is_flag=True, help="Make the post public.")
 @click.option("--tags", default=None, help="Comma-separated tags.")
 @click.pass_context
-def blog_update(ctx, blog_id, title, content, is_public, tags):
+def blog_update(ctx, blog_id, title, content, file_path, is_public, tags):
     """Update a blog post."""
     from wikidocs_cli.main import get_client
+    content = resolve_content(content, file_path)
     data = get_client(ctx).blog_update(blog_id, title, content, is_public=is_public, tags=tags)
     print_json(data)
 
