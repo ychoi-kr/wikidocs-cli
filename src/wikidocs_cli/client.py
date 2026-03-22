@@ -64,13 +64,15 @@ class WikiDocsClient:
         parent_id: int | None = None,
         is_open: bool = False,
     ) -> dict:
-        payload: dict = {"subject": subject, "content": content}
+        payload: dict = {
+            "subject": subject,
+            "content": content,
+            "open_yn": "Y" if is_open else "N",
+        }
         if book_id is not None:
             payload["book_id"] = book_id
         if parent_id is not None:
             payload["parent_id"] = parent_id
-        if is_open:
-            payload["is_open"] = True
         return self._request("POST", "/pages/create/", json=payload)
 
     def update_page(
@@ -81,11 +83,14 @@ class WikiDocsClient:
         parent_id: int | None = None,
         is_open: bool = False,
     ) -> dict:
-        payload: dict = {"id": page_id, "subject": subject, "content": content}
+        payload: dict = {
+            "id": page_id,
+            "subject": subject,
+            "content": content,
+            "open_yn": "Y" if is_open else "N",
+        }
         if parent_id is not None:
             payload["parent_id"] = parent_id
-        if is_open:
-            payload["is_open"] = True
         return self._request("PUT", f"/pages/{page_id}/", json=payload)
 
     # --- Images ---
