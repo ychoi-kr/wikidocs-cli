@@ -78,17 +78,18 @@ class WikiDocsClient:
     def update_page(
         self,
         page_id: int,
-        subject: str,
-        content: str,
+        subject: str | None = None,
+        content: str | None = None,
         parent_id: int | None = None,
-        is_open: bool = False,
+        is_open: bool | None = None,
     ) -> dict:
-        payload: dict = {
-            "id": page_id,
-            "subject": subject,
-            "content": content,
-            "open_yn": "Y" if is_open else "N",
-        }
+        payload: dict = {"id": page_id}
+        if subject is not None:
+            payload["subject"] = subject
+        if content is not None:
+            payload["content"] = content
+        if is_open is not None:
+            payload["open_yn"] = "Y" if is_open else "N"
         if parent_id is not None:
             payload["parent_id"] = parent_id
         return self._request("PUT", f"/pages/{page_id}/", json=payload)

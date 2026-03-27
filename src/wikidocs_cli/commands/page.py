@@ -36,15 +36,15 @@ def page_create(ctx, subject, content, file_path, book_id, parent_id, is_open):
 
 @page.command("update")
 @click.argument("page_id", type=int)
-@click.option("--subject", required=True, help="Page title.")
+@click.option("--subject", default=None, help="Page title.")
 @click.option("--content", default=None, help="Page content.")
 @click.option("--file", "file_path", type=click.Path(exists=True), default=None, help="Read content from file.")
 @click.option("--parent-id", type=int, default=None, help="Parent page ID.")
-@click.option("--open", "is_open", is_flag=True, help="Make the page public.")
+@click.option("--open/--no-open", "is_open", default=None, help="Set page public or private. Omit to keep current state.")
 @click.pass_context
 def page_update(ctx, page_id, subject, content, file_path, parent_id, is_open):
-    """Update an existing page."""
+    """Update an existing page. Only specified fields are changed."""
     from wikidocs_cli.main import get_client
     content = resolve_content(content, file_path)
-    data = get_client(ctx).update_page(page_id, subject, content, parent_id=parent_id, is_open=is_open)
+    data = get_client(ctx).update_page(page_id, subject=subject, content=content, parent_id=parent_id, is_open=is_open)
     print_json(data)
