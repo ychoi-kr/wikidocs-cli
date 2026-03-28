@@ -83,13 +83,24 @@ class WikiDocsClient:
         parent_id: int | None = None,
         is_open: bool | None = None,
     ) -> dict:
-        payload: dict = {"id": page_id}
-        if subject is not None:
-            payload["subject"] = subject
-        if content is not None:
-            payload["content"] = content
-        if is_open is not None:
-            payload["open_yn"] = "Y" if is_open else "N"
+        # Server API requires subject and content on every PUT.
+        # When omitted, fetch current values so users can update
+        # a single field (e.g. visibility) without supplying the rest.
+        if subject is None or content is None or is_open is None:
+            current = self.get_page(page_id)
+            if subject is None:
+                subject = current["subject"]
+            if content is None:
+                content = current["content"]
+            if is_open is None:
+                is_open = current["open_yn"] == "Y"
+
+        payload: dict = {
+            "id": page_id,
+            "subject": subject,
+            "content": content,
+            "open_yn": "Y" if is_open else "N",
+        }
         if parent_id is not None:
             payload["parent_id"] = parent_id
         return self._request("PUT", f"/pages/{page_id}/", json=payload)
