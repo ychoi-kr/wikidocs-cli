@@ -85,6 +85,11 @@ wikidocs page create --book-id BOOK_ID --subject "Public Page" --content "Conten
 
 # Update a page
 wikidocs page update PAGE_ID --subject "Updated Title" --content "Updated content"
+
+# Move a page to root level (remove parent)
+wikidocs page update PAGE_ID --no-parent
+# or
+wikidocs page update PAGE_ID --parent-id 0
 ```
 
 ### Images

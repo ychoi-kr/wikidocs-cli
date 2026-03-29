@@ -39,12 +39,28 @@ def page_create(ctx, subject, content, file_path, book_id, parent_id, is_open):
 @click.option("--subject", default=None, help="Page title.")
 @click.option("--content", default=None, help="Page content.")
 @click.option("--file", "file_path", type=click.Path(exists=True), default=None, help="Read content from file.")
-@click.option("--parent-id", type=int, default=None, help="Parent page ID.")
+@click.option("--parent-id", type=int, default=None, help="Parent page ID. Use 0 to detach to root.")
+@click.option("--no-parent", is_flag=True, help="Detach page from its parent and move it to root level.")
 @click.option("--open/--no-open", "is_open", default=None, help="Set page public or private. Omit to keep current state.")
 @click.pass_context
-def page_update(ctx, page_id, subject, content, file_path, parent_id, is_open):
+def page_update(ctx, page_id, subject, content, file_path, parent_id, no_parent, is_open):
     """Update an existing page. Only specified fields are changed."""
     from wikidocs_cli.main import get_client
+
+    if no_parent and parent_id is not None:
+        raise click.ClickException("Use either --parent-id or --no-parent, not both.")
+
+    detach_parent = no_parent or parent_id == 0
+    if parent_id == 0:
+        parent_id = None
+
     content = resolve_content(content, file_path)
-    data = get_client(ctx).update_page(page_id, subject=subject, content=content, parent_id=parent_id, is_open=is_open)
+    data = get_client(ctx).update_page(
+        page_id,
+        subject=subject,
+        content=content,
+        parent_id=parent_id,
+        detach_parent=detach_parent,
+        is_open=is_open,
+    )
     print_json(data)

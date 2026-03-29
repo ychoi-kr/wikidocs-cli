@@ -81,6 +81,7 @@ class WikiDocsClient:
         subject: str | None = None,
         content: str | None = None,
         parent_id: int | None = None,
+        detach_parent: bool = False,
         is_open: bool | None = None,
     ) -> dict:
         # Server API requires subject and content on every PUT.
@@ -101,7 +102,9 @@ class WikiDocsClient:
             "content": content,
             "open_yn": "Y" if is_open else "N",
         }
-        if parent_id is not None:
+        if detach_parent:
+            payload["parent_id"] = ""
+        elif parent_id is not None:
             payload["parent_id"] = parent_id
         return self._request("PUT", f"/pages/{page_id}/", json=payload)
 
